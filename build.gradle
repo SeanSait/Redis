@@ -1,0 +1,35 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+	id 'com.github.johnrengelman.shadow' version '7.1.2'
+	id 'eclipse'
+	id 'java'
+}
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+
+	// Jedis
+	shadow (group: 'redis.clients', name: 'jedis', version: '5.0.0-alpha1')
+
+	// Required for Jedis
+	shadow (group: 'org.apache.commons', name: 'commons-pool2', version: '2.11.1')
+
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.compilerArgs += ["-source", "" + 8, "-target", "" + 8]
+}
+
+shadowJar {
+	configurations = [project.configurations.shadow]
+	archiveVersion = version
+	minimize()
+}
